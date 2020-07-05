@@ -1,9 +1,25 @@
 from django.contrib import admin
 from .models import Choice, Question, Review
 
-admin.site.register(Question)
-admin.site.register(Choice)
+# admin.site.register(Question)
+# admin.site.register(Choice)
 admin.site.register(Review)
 
+# class ChoiceInline(admin.StackedInline):# uses extra screen size
+class ChoiceInline(admin.TabularInline):
+    model = Choice
+    extra = 3
 
-# Register your models here.
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ('question_text', 'pub_date', 'was_published_recently')
+    list_filter = ['pub_date']
+    search_fields = ['question_text']
+    fieldsets = [
+        ('Question', {'fields': ['question_text']}),
+        ('Date information', {'fields': ['pub_date'], 'classes': ['collapse']}),
+    ]
+    inlines = [ChoiceInline]
+# class QuestionAdmin(admin.ModelAdmin):
+#     list_display = ('question_text', 'pub_date')
+admin.site.register(Question, QuestionAdmin)
+
